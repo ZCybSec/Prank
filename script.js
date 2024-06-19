@@ -1,28 +1,32 @@
 $(document).ready(function(){
     $('#jokeButton').click(function(){
-        // Prevent multiple clicks on the button
+        // منع النقر المتكرر على الزر
         $(this).prop('disabled', true);
 
-        // Messages to be displayed in the pop-up windows
+        // تحديد النص المطلوب طباعته في النوافذ المنبثقة
         var hackerMessages = [
-            "You can't close this window!",
-            "You've been hacked!",
-            "System breach detected!",
-            "Unauthorized access!",
-            "Your system is compromised!"
+            "لا يمكنك إغلاق هذه النافذة!",
+            "تم اختراقك!",
+            "تم اكتشاف خرق للنظام!",
+            "الوصول غير مصرح!",
+            "نظامك معرض للخطر!"
         ];
         var imageUrl = "giphy.gif";
+        var audioUrl = "alert.mp3"; // رابط الصوت المزعج
 
-        // Create a new window every second
+        // إنشاء نافذة جديدة كل 1 ثانية
         setInterval(function(){
-            openMultipleWindows(hackerMessages, imageUrl, 1); // Open 3 windows instead of one
-        }, 3000); // 1000 milliseconds equals 1 second
+            openMultipleWindows(hackerMessages, imageUrl, 3); // فتح 3 نوافذ بدلاً من واحدة
+        }, 1000); // 1000 مللي ثانية تعادل 1 ثانية
 
-        // Open a new window when the button is clicked
-        openMultipleWindows(hackerMessages, imageUrl, 1); // Open 3 windows instead of one
+        // فتح نافذة جديدة عند النقر على الزر
+        openMultipleWindows(hackerMessages, imageUrl, 3); // فتح 3 نوافذ بدلاً من واحدة
 
-        // Open a fixed window in the center
+        // فتح نافذة ثابتة في المنتصف
         openFixedWindow(hackerMessages);
+
+        // تشغيل الصوت المزعج بشكل مستمر
+        playAudio(audioUrl);
     });
 
     function openMultipleWindows(messages, imageUrl, count) {
@@ -32,41 +36,60 @@ $(document).ready(function(){
     }
 
     function openMovingWindow(message, imageUrl) {
-        // Set image size
-        var imageWidth = 500; // Image width
-        var imageHeight = 300; // Image height
+        // تحديد حجم الصورة
+        var imageWidth = 500; // عرض الصورة
+        var imageHeight = 300; // ارتفاع الصورة
 
-        // Open a new window with the appropriate size
+        // فتح نافذة جديدة بالحجم المناسب
         var newWindow = window.open("", "_blank", `width=${imageWidth},height=${imageHeight + 100}`);
         newWindow.document.write(`
             <style>
                 body { background-color: #000; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 20px; color: #0f0; }
-                h1 { color: #0f0; }
+                h1 { color: #f00; }
                 p { font-size: 18px; color: #0f0; }
                 img { max-width: 100%; }
+                .glitch {
+                    color: #0f0;
+                    font-size: 30px;
+                    position: relative;
+                    animation: glitch 1s infinite;
+                }
+                @keyframes glitch {
+                    0% {
+                        text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
+                    }
+                    25% {
+                        text-shadow: -2px 2px #ff00ff, 2px -2px #00ffff;
+                    }
+                    50% {
+                        text-shadow: 2px -2px #ff00ff, -2px 2px #00ffff;
+                    }
+                    75% {
+                        text-shadow: -2px -2px #ff00ff, 2px 2px #00ffff;
+                    }
+                    100% {
+                        text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
+                    }
+                }
             </style>
-            <h1>Hacker Alert!</h1>
+            <h1 class="glitch">تنبيه من المخترق!</h1>
             <p>${message}</p>
             <img src="${imageUrl}" alt="Hacker Image" width="${imageWidth}" height="${imageHeight}">
         `);
 
-        // Play audio
-        var audio = document.getElementById("audio");
-        audio.play();
-
-        // Continuously move the window
+        // تحريك النافذة بشكل مستمر
         var x = Math.floor(Math.random() * (window.screen.width - imageWidth));
         var y = Math.floor(Math.random() * (window.screen.height - imageHeight));
         var xDirection = 1;
         var yDirection = 1;
-        var speed = 5; // Increased movement speed
+        var speed = 10; // زيادة سرعة الحركة
 
         setInterval(function() {
-            // Update coordinates
+            // تحديث الإحداثيات
             x += xDirection * speed;
             y += yDirection * speed;
 
-            // Reverse direction when reaching the edge of the screen
+            // عكس الاتجاه عند الوصول إلى حافة الشاشة
             if (x + imageWidth >= window.screen.width || x <= 0) {
                 xDirection *= -1;
             }
@@ -74,9 +97,14 @@ $(document).ready(function(){
                 yDirection *= -1;
             }
 
-            // Move the window to the new location
+            // تحريك النافذة إلى الموقع الجديد
             newWindow.moveTo(x, y);
-        }, 10); // Update position every 10 milliseconds for faster, more annoying movement
+        }, 10); // تحديث الموقع كل 10 مللي ثانية لتحقيق حركة أسرع وأكثر إزعاجًا
+
+        // طلب تأكيد عند محاولة إغلاق النافذة
+        newWindow.onbeforeunload = function() {
+            return "هل أنت متأكد أنك تريد إغلاق هذه النافذة؟";
+        };
     }
 
     function openFixedWindow(messages) {
@@ -84,10 +112,33 @@ $(document).ready(function(){
         fixedWindow.document.write(`
             <style>
                 body { background-color: #000; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 20px; color: #0f0; }
-                h1 { color: #0f0; }
+                h1 { color: #f00; }
                 p { font-size: 18px; color: #0f0; }
+                .glitch {
+                    color: #0f0;
+                    font-size: 30px;
+                    position: relative;
+                    animation: glitch 1s infinite;
+                }
+                @keyframes glitch {
+                    0% {
+                        text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
+                    }
+                    25% {
+                        text-shadow: -2px 2px #ff00ff, 2px -2px #00ffff;
+                    }
+                    50% {
+                        text-shadow: 2px -2px #ff00ff, -2px 2px #00ffff;
+                    }
+                    75% {
+                        text-shadow: -2px -2px #ff00ff, 2px 2px #00ffff;
+                    }
+                    100% {
+                        text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
+                    }
+                }
             </style>
-            <h1>Hacker Alert!</h1>
+            <h1 class="glitch">تنبيه من المخترق!</h1>
             <p id="hackerMessage">${messages[0]}</p>
         `);
 
@@ -95,15 +146,21 @@ $(document).ready(function(){
         setInterval(function() {
             fixedWindow.document.getElementById('hackerMessage').innerText = messages[messageIndex];
             messageIndex = (messageIndex + 1) % messages.length;
-        }, 3000); // Change message every 3 seconds
+        }, 3000); // تغيير العبارة كل 3 ثوانٍ
 
         fixedWindow.onbeforeunload = function() {
-            openFixedWindow(messages); // Reopen the fixed window when trying to close it
+            openFixedWindow(messages); // إعادة فتح النافذة الثابتة عند محاولة إغلاقها
         };
     }
 
-    // Ask for confirmation when trying to close the page
+    function playAudio(audioUrl) {
+        var audio = new Audio(audioUrl);
+        audio.loop = true; // تكرار الصوت بشكل مستمر
+        audio.play();
+    }
+
+    // طلب تأكيد عند محاولة إغلاق الصفحة
     window.onbeforeunload = function() {
-        return "Are you sure you want to leave this page?";
+        return "هل أنت متأكد أنك تريد مغادرة هذه الصفحة؟";
     };
 });
