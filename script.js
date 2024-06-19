@@ -13,23 +13,12 @@ $(document).ready(function(){
         ];
         var imageUrl = "giphy.gif";
 
-        // إنشاء نافذة جديدة كل 2 ثوانٍ
-        setInterval(function(){
-            openMultipleWindows(hackerMessages, imageUrl, 3); // فتح 3 نوافذ بدلاً من واحدة
-        }, 3000); // 2000 مللي ثانية تعادل 2 ثوانٍ
-
         // فتح نافذة جديدة عند النقر على الزر
-        openMultipleWindows(hackerMessages, imageUrl, 3); // فتح 3 نوافذ بدلاً من واحدة
+        openMovingWindow(hackerMessages[Math.floor(Math.random() * hackerMessages.length)], imageUrl);
 
         // فتح نافذة ثابتة في المنتصف
         openFixedWindow(hackerMessages);
     });
-
-    function openMultipleWindows(messages, imageUrl, count) {
-        for (var i = 0; i < count; i++) {
-            openMovingWindow(messages[Math.floor(Math.random() * messages.length)], imageUrl);
-        }
-    }
 
     function openMovingWindow(message, imageUrl) {
         // تحديد حجم الصورة
